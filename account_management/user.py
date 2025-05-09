@@ -8,6 +8,9 @@ class User:
         self.id = user_id
         self.username = username
         self.password = password  # NOTE: plaintext for demo — NEVER store like this in real systems!
+        
+    def __repr__(self):
+        return f"User(user_id='{self.user_id}', username='{self.username}')"
 
     def check_password(self, password: str) -> bool:
         return self.password == password

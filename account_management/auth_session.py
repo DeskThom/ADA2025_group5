@@ -23,6 +23,12 @@ class LoginSession:
         self.login_time: datetime = datetime.now(timezone.utc)
         self.expiry_time: datetime = self.login_time + timedelta(minutes=30)
 
+    def __repr__(self):
+        # String representation of the session
+        return (f"LoginSession(session_id='{self.session_id}', "
+                f"user_id='{self.user_id}', login_time='{self.login_time}', "
+                f"expiry_time='{self.expiry_time}')")
+        
     def refresh_expiry(self):
         # Refresh the session expiry time to 30 minutes from now
         now = datetime.now(timezone.utc)
@@ -35,11 +41,7 @@ class LoginSession:
         # Check if the session has expired - returns True if expired
         return datetime.now(timezone.utc) > self.expiry_time
 
-    def __repr__(self):
-        # String representation of the session
-        return (f"LoginSession(session_id='{self.session_id}', "
-                f"user_id='{self.user_id}', login_time='{self.login_time}', "
-                f"expiry_time='{self.expiry_time}')")
+
         
 # AUTHENTICATOR SERVICE
 class Authenticator:
@@ -53,6 +55,9 @@ class Authenticator:
         # Initialize the authenticator with a user repository
         self.user_repository = user_repository
         self.sessions: Dict[str, LoginSession] = {}
+        
+    def __repr__(self):
+        return f"Authenticator(sessions={self.sessions})"
 
     def login(self, username: str, password: str) -> LoginSession:
         # Authenticate the user and create a session
