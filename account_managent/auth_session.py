@@ -1,5 +1,7 @@
 # Basic logic: Session is created when a user logs in, and it expires after a certain period of inactivity.
 # The session can be refreshed to extend its validity period - Making it malleable (i.e. it is an entity that can be changed).
+
+# SHOULD PROBABLY BE CALLED SESSION 
 import uuid
 from datetime import datetime, timedelta, timezone
 
