@@ -1,0 +1,314 @@
+openapi: 3.1.0
+info:
+  title: CTScan Company
+  description: Lorem Ipsum
+  version: 1.0.12
+servers:
+  - url: localhost:8080
+    description: Local server
+tags:
+  - name: Authentication
+    description: Authentication and Authorization
+  - name: UserService
+    description: UserAccountService
+  - name: AnalysisService
+    description: Analyzation of CTScan and Reporting
+paths:
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user.
+      description: This can only be done by the logged in user.
+      operationId: loginUser
+      requestBody:
+        description: Login user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          description: Invalid username/password supplied
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user.
+      description: This can only be done by the logged in user.
+
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid username/password supplied
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /account:
+    post:
+      tags:
+          - UserService
+      summary: Create user account.
+      description:
+      requestBody:
+        description: Create a new user account
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: user created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /account/{userId}:
+    get:
+      tags:
+        - UserService
+      summary: Get user account by userId.
+      description: Get user account detail based on userId.
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          description: The userId that needs to be fetched.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid userId supplied
+        '404':
+          description: User not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+      # summary: Update an existing pet.
+      # description: Update an existing pet by Id.
+      # operationId: updatePet
+      # requestBody:
+      #   description: Update an existent pet in the store
+      #   content:
+      #     application/json:
+      #       schema:
+      #         $ref: '#/components/schemas/Pet'
+      #     application/xml:
+      #       schema:
+      #         $ref: '#/components/schemas/Pet'
+      #     application/x-www-form-urlencoded:
+      #       schema:
+      #         $ref: '#/components/schemas/Pet'
+      #   required: true
+      # responses:
+      #   '200':
+      #     description: Successful operation
+      #     content:
+      #       application/json:
+      #         schema:
+      #           $ref: '#/components/schemas/Pet'
+      #       application/xml:
+      #         schema:
+      #           $ref: '#/components/schemas/Pet'
+      #   '400':
+      #     description: Invalid ID supplied
+      #   '404':
+      #     description: Pet not found
+      #   '422':
+      #     description: Validation exception
+      #   default:
+      #     description: Unexpected error
+      #     content:
+      #       application/json:
+      #         schema:
+      #           $ref: "#/components/schemas/Error"
+  /dummy:
+    get:
+      tags:
+        - AnalysisService
+      summary: Dummy endpoint.
+      description: Dummy endpoint to test the API.
+      operationId: dummyEndpoint
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Dummy response"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+components:
+  schemas:
+    UserCredentials:
+      type: object
+      properties:
+        username:
+          type: string
+          description: The name for the user.
+          example: john doe
+        password:
+          type: string
+          description: The password for the user, note- In a real system, this should be hashed.
+          example: password123
+    User:
+      allOf:
+        - $ref: '#/components/schemas/UserCredentials'
+        - type: object
+          properties:
+            userId:
+              type: integer
+              format: int64
+              description: The unique identifier for the user.
+            email:
+              type: string
+              example: john@email.com
+            type:
+              type: int
+              description: The type of user. 1 --> Doctor, 2 --> User
+              example: 2
+              default: 2
+    Session:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: The unique identifier for the session.
+          format: uuid
+          example: 1234567890abcdef
+        userId:
+          type: integer
+          format: int64
+          description: The unique identifier for the user.
+          example: 1
+        expiryTime:
+          type: string
+          format: date-time
+          description: Datetime of expiry
+    Report:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          description: Datetime
+        content:
+          type: string
+          format: html
+          description: htmlContent
+        owner:
+          type: integer
+          format: int64
+          description: UserId
+          example: 1
+        ctScanAnalysis:
+          type: array
+          description: Array of CTScan
+          items: 
+            $ref: "#/components/schemas/CtScanAnalysis"
+    CtScan:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        image:
+          type: string
+          description: Image Blob
+          format: binary
+        createdAt:
+          type: string
+          description: Datetime
+          format: date-time
+        owner:
+          type: integer
+          format: int64
+          description: User Id
+          example: 1
+    CtScanAnalysis:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        createdAt:
+          type: string
+          description: Datetime
+          format: date-time
+        ctScan:
+          type: array
+          description: One CTScan
+          items: 
+            $ref: "#/components/schemas/CtScan"
+        score:
+          type: number
+          format: float
+          description: Score of the analysis
+        owner:
+          type: integer
+          format: int64
+          description: User Id
+          example: 1 
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message

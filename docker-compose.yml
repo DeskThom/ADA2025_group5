@@ -1,0 +1,27 @@
+services:
+  swagger-ui:
+    image: swaggerapi/swagger-ui:v5.17.14
+    environment:
+      SWAGGER_JSON: /swagger/swagger.yaml
+    ports:
+      - 2000:8080
+    volumes:
+      - ./swagger:/swagger
+
+  # analysis_service:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 3000:8080
+  #   volumes:
+  #     - ./data:/data
+  
+  user_service:
+    build:
+      context: ./user_service
+      dockerfile: Dockerfile
+    ports:
+      - 6000:6000
+    volumes:
+      - ./data:/data
