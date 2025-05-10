@@ -1,6 +1,28 @@
 {
   "$schema": "http://www.krakend.io/schema/v3.json",
   "version": 3,
+  "extra_config": {
+    "security/cors": {
+      "allow_origins": [
+        "*"
+      ],
+      "allow_methods": [
+        "GET",
+        "HEAD",
+        "POST"
+      ],
+      "expose_headers": [
+        "Content-Length",
+        "Content-Type"
+      ],
+      "allow_headers": [
+        "Accept-Language"
+      ],
+      "max_age": "12h",
+      "allow_credentials": false,
+      "debug": false
+    }
+  },
   "output_encoding": "json",
   "name": "CTScan API",
   "port": 8081,
@@ -17,7 +39,6 @@
           "host": [
             "http://user_service:5000/"
           ]
-
         }
       ]
     },
@@ -33,7 +54,126 @@
           "host": [
             "http://analysis_service:5000/"
           ]
-
+        }
+      ]
+    },
+    {
+      "endpoint": "/login",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/login",
+          "encoding": "json",
+          "method": "POST",
+          "host": [
+            "http://user_service:5000/"
+          ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/logout",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/logout",
+          "encoding": "json",
+          "method": "POST",
+          "host": [
+            "http://user_service:5000/"
+          ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/account",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/account",
+          "encoding": "json",
+          "method": "POST",
+          "host": [
+            "http://user_service:5000/"
+          ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/account/{userId}",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/account/{userId}",
+          "encoding": "json",
+          "method": "POST",
+          "host": [
+            "http://user_service:5000/"
+          ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/upload",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/upload",
+          "encoding": "json",
+          "method": "POST",
+          "host": [
+            "http://analysis_service:5000/"
+          ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/analyse",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/analyse",
+          "encoding": "json",
+          "method": "POST",
+          "host": [
+            "http://analysis_service:5000/"
+          ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/report",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/report",
+          "encoding": "json",
+          "method": "POST",
+          "host": [
+            "http://analysis_service:5000/"
+          ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/create_report",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/create_report",
+          "encoding": "json",
+          "method": "POST",
+          "host": [
+            "http://analysis_service:5000/"
+          ]
         }
       ]
     }

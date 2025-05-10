@@ -4,9 +4,11 @@ info:
   description: Lorem Ipsum
   version: 1.0.12
 servers:
-  - url: localhost:8080
+  - url: http://localhost:8080
     description: Local server
 tags:
+  - name: TestSwagger
+    description: Test Swagger
   - name: Authentication
     description: Authentication and Authorization
   - name: UserService
@@ -72,7 +74,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserCredentials'
         required: true
       responses:
         '200':
@@ -88,7 +90,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /account/{userId}:
-    get:
+    post:
       tags:
         - UserService
       summary: Get user account by userId.
@@ -162,59 +164,173 @@ paths:
       #       application/json:
       #         schema:
       #           $ref: "#/components/schemas/Error"
-  /dummy:
-    get:
+  /upload:
+    post:
       tags:
         - AnalysisService
-      summary: Dummy endpoint.
-      description: Dummy endpoint to test the API.
-      operationId: dummyEndpoint
+      summary: Uploads CT Scan.
+      description: Uploads CT Scan
+      operationId: uploadCTScan
+      requestBody:
+        description: Upload CT Scan
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CtScan'
+        required: true
       responses:
         '200':
           description: successful operation
-          content:
-            application/json:
-              schema:
-                type: string
-                example: "Dummy response"
+        '400':
+          description: Invalid CT Scan supplied
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /analyse:
+      post:
+        tags:
+          - AnalysisService
+        summary: Analyse CT Scan.
+        description: Analyse CT Scan
+        operationId: analyseCTScan
+        requestBody:
+          description: Analyse CT Scan
+          content:
+            application/json:
+              schema:
+                  type: array
+                  items:
+                    description: CT Scan Id
+                    format: int64
+                    example: 1
+          required: true
+        responses:
+          '200':
+            description: successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/CtScanAnalysis'
+          '400':
+            description: Invalid CT Scan supplied
+          default:
+            description: Unexpected error
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+          '404':
+            description: CT Scan not found
+  /report:
+    post:
+      tags:
+        - AnalysisService
+      summary: Get report.
+      description: Get report
+      operationId: getReport
+      parameters:
+        - name: reportId
+          in: path
+          description: The reportId that needs to be fetched.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '400':
+          description: Invalid reportId supplied
+        '404':
+          description: Report not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /create_report:
+    post:
+      tags:
+        - AnalysisService
+      summary: Create report.
+      description: Create report
+      operationId: createReport
+      requestBody:
+        description: Create report
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                description: CT Scan Analysis Id
+                format: int64
+                example: 1
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '400':
+          description: Invalid Report supplied
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404':
+          description: CT Scan Analysis not found
+    
 
 
 components:
   schemas:
-    UserCredentials:
+    User:
       type: object
       properties:
+        userId:
+          type: integer
+          format: int64
+          description: The unique identifier for the user.
         username:
           type: string
           description: The name for the user.
           example: john doe
-        password:
+        email:
           type: string
-          description: The password for the user, note- In a real system, this should be hashed.
-          example: password123
-    User:
+          example: john@email.com
+        type:
+          type: int
+          description: The type of user. 1 --> Doctor, 2 --> User
+          example: 2
+          default: 2
+    UserCredentials:
       allOf:
-        - $ref: '#/components/schemas/UserCredentials'
+        - $ref: '#/components/schemas/User'
         - type: object
           properties:
-            userId:
-              type: integer
-              format: int64
-              description: The unique identifier for the user.
-            email:
+            password:
               type: string
-              example: john@email.com
-            type:
-              type: int
-              description: The type of user. 1 --> Doctor, 2 --> User
-              example: 2
-              default: 2
+              description: The password for the user.
+              example: password123
+    # User:
+    #   allOf:
+    #     - $ref: '#/components/schemas/UserCredentials'
+    #     - type: object
+    #       properties:
+            
+            
     Session:
       type: object
       properties:
