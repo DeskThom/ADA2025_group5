@@ -1,0 +1,41 @@
+{
+  "$schema": "http://www.krakend.io/schema/v3.json",
+  "version": 3,
+  "output_encoding": "json",
+  "name": "CTScan API",
+  "port": 8081,
+  "endpoints": [
+    {
+      "endpoint": "/test_user_service",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/",
+          "encoding": "json",
+          "method": "GET",
+          "host": [
+            "http://user_service:5000/"
+          ]
+
+        }
+      ]
+    },
+    {
+      "endpoint": "/test_analysis_service",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/",
+          "encoding": "json",
+          "method": "GET",
+          "host": [
+            "http://analysis_service:5000/"
+          ]
+
+        }
+      ]
+    }
+  ]
+}

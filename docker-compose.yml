@@ -8,20 +8,32 @@ services:
     volumes:
       - ./swagger:/swagger
 
-  # analysis_service:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
+  analysis_service:
+    build:
+      context: ./analysis_service
+      dockerfile: Dockerfile
   #   ports:
-  #     - 3000:8080
-  #   volumes:
-  #     - ./data:/data
+  #     - 5000:5000
+    volumes:
+      - ./data:/data
+    container_name: analysis_service
   
   user_service:
     build:
       context: ./user_service
       dockerfile: Dockerfile
-    ports:
-      - 6000:6000
+    # ports:
+    #   - 5001:5000
     volumes:
       - ./data:/data
+    container_name: user_service
+
+  api_gatway:
+    image: krakend
+    container_name: api_gatway_ct
+    volumes:
+      - ./krakend:/etc/krakend/
+    depends_on:
+      - user_service
+    ports:
+      - 8080:8081
