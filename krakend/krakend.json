@@ -22,9 +22,6 @@
       "max_age": "12h",
       "allow_credentials": false,
       "debug": true
-    },
-    "router": {
-        "auto_options": true
     }
   },
   "output_encoding": "json",

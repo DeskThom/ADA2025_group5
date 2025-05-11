@@ -137,7 +137,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CtScan'
+              type: object
+              properties:
+                file:
+                  type: string
+                  description: Base64 encoded string of the CT Scan file
+                  example: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
         required: true
       responses:
         '200':
@@ -162,9 +167,16 @@ paths:
           content:
             application/json:
               schema:
-                  type: integer
-                  format: int64
-                  description: CT Scan Id
+                type: object
+                properties:
+                  ctScanId:
+                    type: integer
+                    description: Scan
+                    example: "1"
+                  owner:
+                    type: integer
+                    description: User Id
+                    example: "1"
           required: true
         responses:
           '200':
@@ -225,12 +237,22 @@ paths:
       requestBody:
         description: Create report
         content:
-          application/json:
-            schema:
+            application/json:
               schema:
-                  type: integer
-                  format: int64
-                  description: CT Scan Analysis Id
+                type: object
+                properties:
+                  ctScanAnalysisId:
+                    type: integer
+                    description: Scan
+                    example: "1"
+                  content:
+                    type: string
+                    description: Report content
+                    example: "<html><body><h1>CT Scan Report</h1></body></html>"
+                  owner:
+                    type: integer
+                    description: User Id
+                    example: "1"
         required: true
       responses:
         '200':
