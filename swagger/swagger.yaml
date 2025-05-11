@@ -28,7 +28,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserCredentials'
+              $ref: '#/components/schemas/User'
         required: true
       responses:
         '200':
@@ -74,7 +74,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserCredentials'
+              $ref: '#/components/schemas/User'
         required: true
       responses:
         '200':
@@ -90,7 +90,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /account/{userId}:
-    post:
+    get:
       tags:
         - UserService
       summary: Get user account by userId.
@@ -125,45 +125,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-
-      # summary: Update an existing pet.
-      # description: Update an existing pet by Id.
-      # operationId: updatePet
-      # requestBody:
-      #   description: Update an existent pet in the store
-      #   content:
-      #     application/json:
-      #       schema:
-      #         $ref: '#/components/schemas/Pet'
-      #     application/xml:
-      #       schema:
-      #         $ref: '#/components/schemas/Pet'
-      #     application/x-www-form-urlencoded:
-      #       schema:
-      #         $ref: '#/components/schemas/Pet'
-      #   required: true
-      # responses:
-      #   '200':
-      #     description: Successful operation
-      #     content:
-      #       application/json:
-      #         schema:
-      #           $ref: '#/components/schemas/Pet'
-      #       application/xml:
-      #         schema:
-      #           $ref: '#/components/schemas/Pet'
-      #   '400':
-      #     description: Invalid ID supplied
-      #   '404':
-      #     description: Pet not found
-      #   '422':
-      #     description: Validation exception
-      #   default:
-      #     description: Unexpected error
-      #     content:
-      #       application/json:
-      #         schema:
-      #           $ref: "#/components/schemas/Error"
   /upload:
     post:
       tags:
@@ -224,8 +185,8 @@ paths:
                   $ref: "#/components/schemas/Error"
           '404':
             description: CT Scan not found
-  /report:
-    post:
+  /report/{reportId}:
+    get:
       tags:
         - AnalysisService
       summary: Get report.
@@ -256,7 +217,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /create_report:
+  /report:
     post:
       tags:
         - AnalysisService
@@ -315,22 +276,10 @@ components:
           description: The type of user. 1 --> Doctor, 2 --> User
           example: 2
           default: 2
-    UserCredentials:
-      allOf:
-        - $ref: '#/components/schemas/User'
-        - type: object
-          properties:
-            password:
+        password:
               type: string
               description: The password for the user.
               example: password123
-    # User:
-    #   allOf:
-    #     - $ref: '#/components/schemas/UserCredentials'
-    #     - type: object
-    #       properties:
-            
-            
     Session:
       type: object
       properties:
