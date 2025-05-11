@@ -4,7 +4,7 @@ info:
   description: Lorem Ipsum
   version: 1.0.12
 servers:
-  - url: http://localhost:8080
+  - url: http://localho.st:8080
     description: Local server
 tags:
   - name: TestSwagger

@@ -35,5 +35,6 @@ services:
       - ./krakend:/etc/krakend/
     depends_on:
       - user_service
+      - analysis_service
     ports:
       - 8080:8081

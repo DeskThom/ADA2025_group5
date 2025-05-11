@@ -16,15 +16,20 @@
         "Content-Type"
       ],
       "allow_headers": [
-        "Accept-Language"
+        "Accept-Language",
+        "Content-Type"
       ],
       "max_age": "12h",
       "allow_credentials": false,
-      "debug": false
+      "debug": true
+    },
+    "router": {
+        "auto_options": true
     }
   },
   "output_encoding": "json",
   "name": "CTScan API",
+  "host": ["http://localho.st"],
   "port": 8081,
   "endpoints":
     [
@@ -33,6 +38,7 @@
         "method": "POST",
         "backend": [
           {
+            "encoding": "json",
             "url_pattern": "/login",
             "host": ["http://user_service:5000"]
           }
