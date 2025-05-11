@@ -177,17 +177,19 @@ def create_report():
     cursor = conn.cursor()
 
     # Verify analysis exists
-    cursor.execute("SELECT id FROM CtScanAnalysis WHERE id = ?", (analysis_id,))
-    if not cursor.fetchone():
+    analysis_score = cursor.execute("SELECT score FROM CtScanAnalysis WHERE id = ?", (analysis_id)).fetchone()
+    if not analysis_score:
         return {"code": "404", "message": "CT Scan Analysis not found"}, 404
-
+    
+    # Adjust content with score from analysis
+    new_content = content + " Score: " + str(analysis_score[0])
     # Insert report
     cursor.execute(
         """
         INSERT INTO Report (createdAt, ctScanAnalysis, content, owner)
         VALUES (?, ?, ?, ?)
         """,
-        (created_at, analysis_id, content, owner)
+        (created_at, analysis_id, new_content, owner)
     )
     report_id = cursor.lastrowid
     conn.commit()
