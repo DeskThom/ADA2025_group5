@@ -169,27 +169,39 @@ def get_report(reportId):
 def create_report():
     data = request.get_json()
     analysis_id = data.get('ctScanAnalysisId')
-    content = data.get('content')
     owner = data.get('owner', 1)
     created_at = datetime.now().isoformat()
 
     conn = sqlite3.connect(DATABASE_URL)
     cursor = conn.cursor()
 
-    # Verify analysis exists
-    analysis_score = cursor.execute("SELECT score FROM CtScanAnalysis WHERE id = ?", (analysis_id)).fetchone()
-    if not analysis_score:
+    # Verify analysis and get its score
+    cursor.execute("SELECT score FROM CtScanAnalysis WHERE id = ?", (analysis_id,))
+    analysis_row = cursor.fetchone()
+    if not analysis_row:
         return {"code": "404", "message": "CT Scan Analysis not found"}, 404
-    
-    # Adjust content with score from analysis
-    new_content = content + " Score: " + str(analysis_score[0])
+
+    score = analysis_row[0]
+
+    # Dynamically generate HTML content
+    content = f"""
+    <html>
+        <head><title>CT Scan Report</title></head>
+        <body>
+            <h2>CT Scan Analysis Report</h2>
+            <p>Analysis Score: <strong>{score:.2f}</strong></p>
+            <p>Report generated at: {created_at}</p>
+        </body>
+    </html>
+    """
+
     # Insert report
     cursor.execute(
         """
         INSERT INTO Report (createdAt, ctScanAnalysis, content, owner)
         VALUES (?, ?, ?, ?)
         """,
-        (created_at, analysis_id, new_content, owner)
+        (created_at, analysis_id, content, owner)
     )
     report_id = cursor.lastrowid
     conn.commit()
@@ -202,6 +214,7 @@ def create_report():
         "content": content,
         "owner": owner
     }, 200
+
 
 
 # main driver function
