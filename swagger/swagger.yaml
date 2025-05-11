@@ -162,11 +162,9 @@ paths:
           content:
             application/json:
               schema:
-                  type: array
-                  items:
-                    description: CT Scan Id
-                    format: int64
-                    example: 1
+                  type: integer
+                  format: int64
+                  description: CT Scan Id
           required: true
         responses:
           '200':
@@ -229,11 +227,10 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                description: CT Scan Analysis Id
-                format: int64
-                example: 1
+              schema:
+                  type: integer
+                  format: int64
+                  description: CT Scan Analysis Id
         required: true
       responses:
         '200':

@@ -12,8 +12,8 @@ services:
     build:
       context: ./analysis_service
       dockerfile: Dockerfile
-  #   ports:
-  #     - 5000:5000
+    ports:
+      - 5002:5000
     volumes:
       - ./data:/data
     container_name: analysis_service

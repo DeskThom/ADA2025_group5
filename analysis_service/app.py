@@ -1,12 +1,15 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
-from flask import Flask
+from flask import Flask, request
 from resources.customTypes import User, Session, Report, CtScan, CtScanAnalysis, Error
 import json
+import sqlite3
+from datetime import datetime
+
 # Flask constructor takes the name of 
 # current module (__name__) as argument.
 app = Flask(__name__)
-
+DATABASE_URL = '/data/aidence.db'
 # The route() function of the Flask class is a decorator, 
 # which tells the application which URL should call 
 # the associated function.
@@ -18,14 +21,31 @@ def hello_world():
     }
 @app.route('/upload', methods=['POST'])
 def upload_ct_scan():
-    response = CtScan(
+    anonymized_file = request.get_json()['file']  # Corrected line
+    ct_scan = CtScan(
         id=1,
-        image="binary_data",
-        createdAt="2023-01-01T00:00:00Z",
+        image=anonymized_file,
+        createdAt=datetime.now(),
         owner=1
-    ).__dict__
-    print(response)
-    return response, 200
+    )
+    # try:
+    conn = sqlite3.connect(DATABASE_URL)
+    conn.cursor().execute(
+        """
+        INSERT INTO CtScan (image, createdAt, owner)
+        VALUES (?, ?, ?)
+        """,
+        (ct_scan.image, ct_scan.createdAt, ct_scan.owner)
+    )
+    conn.commit()
+    conn.close()
+
+    return {}, 200
+    # except Exception as e:
+    #     print(f"Error uploading CT scan: {e}")
+    #     return {
+    #         "error": "Failed to upload CT scan"
+    #     }, 500
 
 
 @app.route('/analyse', methods=['POST'])

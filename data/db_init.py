@@ -1,77 +1,65 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, Float, LargeBinary, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
-import uuid
-from datetime import datetime
+import sqlite3
 
-Base = declarative_base()
+def create_database():
+    # Connect to the SQLite database (or create it if it doesn't exist)
+    conn = sqlite3.connect('aidence.db')
+    cursor = conn.cursor()
 
-# Define User table
-class User(Base):
-    __tablename__ = 'User'
-    userId = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String)
-    email = Column(String)
-    type = Column(Integer)
-    password = Column(String)
+    # SQL statements to create tables
+    sql_statements = [
+        """CREATE TABLE IF NOT EXISTS User (
+            userId INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
+            email TEXT,
+            type INTEGER,
+            password TEXT
+        );""",
+        """CREATE TABLE IF NOT EXISTS Session (
+            sessionId TEXT PRIMARY KEY,
+            userId INTEGER,
+            expiryTime DATETIME,
+            FOREIGN KEY (userId) REFERENCES User(userId)
+        );""",
+        """CREATE TABLE IF NOT EXISTS CtScan (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            image BLOB,
+            createdAt DATETIME,
+            owner INTEGER,
+            FOREIGN KEY (owner) REFERENCES User(userId)
+        );""",
+        """CREATE TABLE IF NOT EXISTS CtScanAnalysis (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            createdAt DATETIME,
+            score REAL,
+            owner INTEGER,
+            ctScan INTEGER,
+            FOREIGN KEY (owner) REFERENCES User(userId),
+            FOREIGN KEY (ctScan) REFERENCES CtScan(id)
+        );""",
+        """CREATE TABLE IF NOT EXISTS Report (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            createdAt DATETIME,
+            ctScanAnalysis INTEGER,
+            content TEXT,
+            owner INTEGER,
+            FOREIGN KEY (owner) REFERENCES User(userId),
+            FOREIGN KEY (ctScanAnalysis) REFERENCES CtScanAnalysis(id)
+        );"""
+    ]
 
-    sessions = relationship("Session", back_populates="user")
-    reports = relationship("Report", back_populates="owner")
-    ct_scans = relationship("CtScan", back_populates="owner")
-    ct_scan_analyses = relationship("CtScanAnalysis", back_populates="owner")
+    # Execute each SQL statement
+    for statement in sql_statements:
+        cursor.execute(statement)
 
-# Define Session table
-class Session(Base):
-    __tablename__ = 'Session'
-    sessionId = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    userId = Column(Integer, ForeignKey('User.userId'))
-    expiryTime = Column(DateTime)
+    # Insert a dummy user
+    cursor.execute("""
+        INSERT INTO User (username, email, type, password)
+        VALUES (?, ?, ?, ?)
+    """, ('dummy_user', 'dummy@example.com', 1, 'securepassword123'))
 
-    user = relationship("User", back_populates="sessions")
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()
 
-# Define Report table
-class Report(Base):
-    __tablename__ = 'Report'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    createdAt = Column(DateTime, default=datetime.utcnow)
-    content = Column(Text)
-    owner = Column(Integer, ForeignKey('User.userId'))
-
-    owner_user = relationship("User", back_populates="reports")
-
-# Define CtScan table
-class CtScan(Base):
-    __tablename__ = 'CtScan'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    image = Column(LargeBinary)
-    createdAt = Column(DateTime, default=datetime.utcnow)
-    owner = Column(Integer, ForeignKey('User.userId'))
-
-    owner_user = relationship("User", back_populates="ct_scans")
-    ct_scan_analyses = relationship("CtScanAnalysis", secondary="CtScanAnalysisCtScan", back_populates="ct_scans")
-
-# Define CtScanAnalysis table
-class CtScanAnalysis(Base):
-    __tablename__ = 'CtScanAnalysis'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    createdAt = Column(DateTime, default=datetime.utcnow)
-    score = Column(Float)
-    owner = Column(Integer, ForeignKey('User.userId'))
-
-    owner_user = relationship("User", back_populates="ct_scan_analyses")
-    ct_scans = relationship("CtScan", secondary="CtScanAnalysisCtScan", back_populates="ct_scan_analyses")
-
-# Junction table for CtScan and CtScanAnalysis
-class CtScanAnalysisCtScan(Base):
-    __tablename__ = 'CtScanAnalysisCtScan'
-    ctScanId = Column(Integer, ForeignKey('CtScan.id'), primary_key=True)
-    ctScanAnalysisId = Column(Integer, ForeignKey('CtScanAnalysis.id'), primary_key=True)
-
-# Create an engine that stores data in the local directory's
-# sqlalchemy_example.db file.
-engine = create_engine('sqlite:///aidence.db')
-
-# Create all tables in the database
-Base.metadata.create_all(engine)
-
-print("Database schema created successfully.")
+if __name__ == "__main__":
+    create_database()
