@@ -7,8 +7,6 @@ servers:
   - url: http://localho.st:8080
     description: Local server
 tags:
-  - name: TestSwagger
-    description: Test Swagger
   - name: Authentication
     description: Authentication and Authorization
   - name: UserService
@@ -28,7 +26,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The name for the user.
+                  example: john doe
+                password:
+                  type: string
+                  description: The password for the user.
+                  example: password123
         required: true
       responses:
         '200':
@@ -51,7 +58,19 @@ paths:
         - Authentication
       summary: Logout user.
       description: This can only be done by the logged in user.
-
+      operationId: logoutUser
+      requestBody:
+        description: Logout user
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  description: The unique identifier for the user.
+                  example: 1
+        required: true
       responses:
         '200':
           description: successful operation
