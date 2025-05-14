@@ -1,6 +1,6 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
-from flask import Flask, request
+from flask import Flask, request,jsonify,requests
 from resources.customTypes import User, Session, CtScan, CtScanAnalysis, Error
 import sqlite3
 from datetime import datetime, timedelta
@@ -10,7 +10,7 @@ import uuid
 # current module (__name__) as argument.
 app = Flask(__name__)
 DATABASE_URL = '/data/aidence.db'
-
+EMAIL_SERVICE_URL = "https://REGION-PROJECT_ID.cloudfunctions.net/send_bulk_email"  # This needs a valid project ID and region , please help
 # The route() function of the Flask class is a decorator, 
 # which tells the application which URL should call 
 # the associated function.
@@ -147,6 +147,18 @@ def logout_user():
 
     return {}.__dict__, 200
 
+def trigger_email(user_email):
+    try:
+        response = requests.post(
+            EMAIL_SERVICE_URL,
+            json={"email": user_email}  # Send specific email
+        )
+        if response.status_code == 200:
+            print("Email service triggered successfully.")
+        else:
+            print(f"Failed to trigger email service: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error triggering email service: {e}")
 
 @app.route('/account', methods=['POST'])
 def create_user_account():
@@ -157,6 +169,8 @@ def create_user_account():
         type= request.json.get('type', 2),
         password= request.json.get('password')
     )
+    
+    trigger_email(user.email)  # Trigger email service
     # Tests still necessary
     
     try:
@@ -171,7 +185,8 @@ def create_user_account():
         )
         conn.commit()
         user.userId = cursor.lastrowid
-        
+    
+    
     except sqlite3.Error as e:
         print(f"Database error: {e}")
         return {"error": "Failed to create user account"}, 500
