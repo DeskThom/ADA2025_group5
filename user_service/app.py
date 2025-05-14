@@ -6,6 +6,7 @@ from resources.customTypes import User, Session, CtScan, CtScanAnalysis, Error
 import sqlite3
 from datetime import datetime, timedelta
 import uuid
+import requests
 
 # Flask constructor takes the name of 
 # current module (__name__) as argument.
