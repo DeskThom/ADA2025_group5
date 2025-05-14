@@ -10,7 +10,7 @@ import uuid
 # current module (__name__) as argument.
 app = Flask(__name__)
 DATABASE_URL = '/data/aidence.db'
-EMAIL_SERVICE_URL = "https://REGION-PROJECT_ID.cloudfunctions.net/send_bulk_email"  # This needs a valid project ID and region , please help
+EMAIL_SERVICE_URL = "https://REGION-PROJECT_ID.cloudfunctions.net/send_email_to_user"  # This needs a valid project ID and region , please help
 # The route() function of the Flask class is a decorator, 
 # which tells the application which URL should call 
 # the associated function.
