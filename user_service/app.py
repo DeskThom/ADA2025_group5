@@ -1,6 +1,7 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
-from flask import Flask, request,jsonify,requests
+from flask import Flask, request
+import requests
 from resources.customTypes import User, Session, CtScan, CtScanAnalysis, Error
 import sqlite3
 from datetime import datetime, timedelta
@@ -10,7 +11,7 @@ import uuid
 # current module (__name__) as argument.
 app = Flask(__name__)
 DATABASE_URL = '/data/aidence.db'
-EMAIL_SERVICE_URL = "https://REGION-PROJECT_ID.cloudfunctions.net/send_email_to_user"  # This needs a valid project ID and region , please help
+EMAIL_SERVICE_URL = "https://us-central1-adaaaaa.cloudfunctions.net/send-email"  # This needs a valid project ID and region , please help
 # The route() function of the Flask class is a decorator, 
 # which tells the application which URL should call 
 # the associated function.
@@ -157,8 +158,10 @@ def trigger_email(user_email):
             print("Email service triggered successfully.")
         else:
             print(f"Failed to trigger email service: {response.status_code}")
-    except requests.exceptions.RequestException as e:
+    except request.exceptions.RequestException as e:
         print(f"Error triggering email service: {e}")
+    finally:
+        print(f"Email service triggered successfully.")
 
 @app.route('/account', methods=['POST'])
 def create_user_account():
@@ -170,7 +173,8 @@ def create_user_account():
         password= request.json.get('password')
     )
     
-    trigger_email(user.email)  # Trigger email service
+    result = trigger_email(user.email)  # Trigger email service
+    print(f"Trigger mail succes: {result}")
     # Tests still necessary
     
     try:
