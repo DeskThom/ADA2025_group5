@@ -110,6 +110,26 @@
             "host": ["http://analysis_service:5000"]
           }
         ]
+      },
+      {
+        "endpoint": "/payment/{userId}",
+        "method": "GET",
+        "backend": [
+          {
+            "url_pattern": "/payment/{userId}",
+            "host": ["http://payment_service:5000"]
+          }
+        ]
+      },
+      {
+        "endpoint": "/payment",
+        "method": "POST",
+        "backend": [
+          {
+            "url_pattern": "/payment",
+            "host": ["http://payment_service:5000"]
+          }
+        ]
       }
     ]
 }

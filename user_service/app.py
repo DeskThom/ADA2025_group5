@@ -165,7 +165,7 @@ def send_periodic_email():
             print(f"Error sending periodic email: {e}")
         time.sleep(86400)
 
-def trigger_email(user_email,type_email,other_data):
+def trigger_email(user_email, type_email, other_data):
     try:
         response = requests.post(
             EMAIL_SERVICE_URL,
@@ -176,11 +176,11 @@ def trigger_email(user_email,type_email,other_data):
             }
         )
         if response.status_code == 200:
-            print("Email service triggered successfully.")
+            print("Email service send successfully.")
         else:
-            print(f"Failed to trigger email service: {response.status_code}")
+            print(f"Failed to send email service: {response.status_code}")
     except request.exceptions.RequestException as e:
-        print(f"Error triggering email service: {e}")
+        print(f"Error sending email service: {e}")
     finally:
         print(f"Email service triggered successfully.")
 

@@ -12,7 +12,8 @@ def create_database():
             username TEXT,
             email TEXT,
             type INTEGER,
-            password TEXT
+            password TEXT,
+            iban TEXT
         );""",
         """CREATE TABLE IF NOT EXISTS Session (
             sessionId TEXT PRIMARY KEY,
@@ -44,7 +45,15 @@ def create_database():
             owner INTEGER,
             FOREIGN KEY (owner) REFERENCES User(userId),
             FOREIGN KEY (ctScanAnalysis) REFERENCES CtScanAnalysis(id)
-        );"""
+        );""",
+        """CREATE TABLE IF NOT EXISTS Payment (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            createdAt DATETIME,
+            amount REAL,
+            user INTEGER,
+            FOREIGN KEY (user) REFERENCES User(userId)
+        );""",
+
     ]
 
     # Execute each SQL statement
@@ -53,9 +62,9 @@ def create_database():
 
     # Insert a dummy user
     cursor.execute("""
-        INSERT INTO User (username, email, type, password)
-        VALUES (?, ?, ?, ?)
-    """, ('dummy_user', 'dummy@example.com', 1, 'securepassword123'))
+        INSERT INTO User (username, email, type, password, iban)
+        VALUES (?, ?, ?, ?, ?)
+    """, ('dummy_user', 'dummy@example.com', 1, 'securepassword123', 'NL89370400440532013000'))
 
     # Commit the changes and close the connection
     conn.commit()

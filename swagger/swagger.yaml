@@ -13,6 +13,8 @@ tags:
     description: UserAccountService
   - name: AnalysisService
     description: Analyzation of CTScan and Reporting
+  - name: Payment
+    description: Payment Service
 paths:
   /login:
     post:
@@ -290,8 +292,75 @@ paths:
                 $ref: "#/components/schemas/Error"
         '404':
           description: CT Scan Analysis not found
-    
-
+  /payment:
+    post:
+      tags:
+        - Payment
+      summary: Payment.
+      description: Put new payment in the database
+      operationId: payment
+      requestBody:
+        description: Payment
+        content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                    description: The unique identifier for the user.
+                    example: 1
+                  amount:
+                    type: number
+                    format: integer
+                    description: Amount to be paid
+                    example: 100.50
+        required: true
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid payment details supplied
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"  
+  /payment/{userId}:
+    get:
+      tags:
+        - Payment
+      summary: Get payment information.
+      description: Get payment information about payment from userId.
+      operationId: getPayment
+      parameters:
+        - name: userId
+          in: path
+          description: The userId that needs to be fetched.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+        '400':
+          description: Invalid userId supplied
+        '404':
+          description: User not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 components:
   schemas:
@@ -318,6 +387,10 @@ components:
               type: string
               description: The password for the user.
               example: password123
+        iban:
+          type: string
+          description: The IBAN for the user.
+          example: NL89370400440532013000
     Session:
       type: object
       properties:
@@ -335,6 +408,29 @@ components:
           type: string
           format: date-time
           description: Datetime of expiry
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the payment.
+          example: 1
+        userId:
+          type: integer
+          format: int64
+          description: The unique identifier for the user.
+          example: 1
+        amount:
+          type: number
+          format: float
+          description: Amount to be paid
+          example: 100.50
+        createdAt:
+          type: string
+          format: date-time
+          description: Datetime of payment
+          example: 2023-10-01T12:00:00Z
     Report:
       type: object
       properties:

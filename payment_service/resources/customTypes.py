@@ -40,6 +40,11 @@ class CtScanAnalysis(BaseModel):
     score: float
     owner: int
 
+class Payment(BaseModel):
+    id: Optional[int]
+    createdAt: datetime
+    amount: float
+    userId: int
 
 class Error(BaseModel):
     pass

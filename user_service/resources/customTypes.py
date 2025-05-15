@@ -9,6 +9,7 @@ class User(BaseModel):
     email: str
     type: int = 2
     password: str
+    iban: str
 
 
 class Session(BaseModel):

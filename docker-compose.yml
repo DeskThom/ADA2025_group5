@@ -28,6 +28,16 @@ services:
       - ./data:/data
     container_name: user_service
 
+  payment_service:
+    build:
+      context: ./payment_service
+      dockerfile: Dockerfile
+    # ports:
+    #   - 5003:5000
+    volumes:
+      - ./data:/data
+    container_name: payment_service
+
   api_gatway:
     image: krakend
     container_name: api_gatway_ct

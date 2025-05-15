@@ -26,7 +26,6 @@ The Aidence Team
 
 P.S. Remember – when it comes to your lungs, we’ve got you covered, right down to the last pixel! 
 '''
-
 message2 = '''
 Hi Indika,
 
@@ -51,6 +50,7 @@ def send_email(to_email, subject, body):
         if response == {}:
             return True
         return False
+    
 @functions_framework.http
 def send_email_to_user(request):
 
