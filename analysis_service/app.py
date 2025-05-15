@@ -6,12 +6,14 @@ import json
 import sqlite3
 import random
 from datetime import datetime
-
+import requests
 
 # Flask constructor takes the name of 
 # current module (__name__) as argument.
 app = Flask(__name__)
 DATABASE_URL = '/data/aidence.db'
+EMAIL_SERVICE_URL = "https://us-central1-adaaaaa.cloudfunctions.net/send-email"  # This needs a valid project ID and region , please help
+
 # The route() function of the Flask class is a decorator, 
 # which tells the application which URL should call 
 # the associated function.
@@ -116,7 +118,7 @@ def get_report(reportId):
         return {"code": "404", "message": "Report not found"}, 404
 
     report_id, report_created_at, analysis_id, content, report_owner = report_row
-
+    
     # Get CtScanAnalysis
     cursor.execute(
         "SELECT id, createdAt, score, owner, ctScan FROM CtScanAnalysis WHERE id = ?",
@@ -163,6 +165,24 @@ def get_report(reportId):
 
     return response, 200
 
+def trigger_email(user_email,type_email,other_data):
+    try:
+        response = requests.post(
+            EMAIL_SERVICE_URL,
+            json={
+                "email": user_email,
+                "type": type_email,
+                "other_data": other_data  # Add any other data you want to send
+            }
+        )
+        if response.status_code == 200:
+            print("Email service triggered successfully.")
+        else:
+            print(f"Failed to trigger email service: {response.status_code}")
+    except request.exceptions.RequestException as e:
+        print(f"Error triggering email service: {e}")
+    finally:
+        print(f"Email service triggered successfully.")
 
 
 @app.route('/report', methods=['POST'])
@@ -170,6 +190,16 @@ def create_report():
     data = request.get_json()
     analysis_id = data.get('ctScanAnalysisId')
     owner = data.get('owner', 1)
+     # Get the owner's email from the User table
+    cursor.execute(
+        "SELECT email FROM User WHERE id = ?",
+        (owner,)
+    )
+    user_row = cursor.fetchone()
+    if user_row:
+        report_owner_email = user_row[0]
+    else:
+        report_owner_email = None  # or handle not found
     created_at = datetime.now().isoformat()
 
     conn = sqlite3.connect(DATABASE_URL)
@@ -194,6 +224,8 @@ def create_report():
         </body>
     </html>
     """
+    result = trigger_email(report_owner_email,1,content)  # Trigger email service
+    print(f"Trigger mail succes: {result}")
 
     # Insert report
     cursor.execute(

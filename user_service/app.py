@@ -7,6 +7,8 @@ import sqlite3
 from datetime import datetime, timedelta
 import uuid
 import requests
+import multiprocessing
+import time
 
 # Flask constructor takes the name of 
 # current module (__name__) as argument.
@@ -148,12 +150,30 @@ def logout_user():
         conn.close()
 
     return {}.__dict__, 200
+def send_periodic_email():
+    i=1
+    while True:
+        
+        try:
+            user_email = "aidencemails@gmail.com"
+            type_email = 2
+            other_data = i
+            trigger_email(user_email, type_email, other_data)
+            print(f"Periodic email sent to {user_email}")
+            i+=1
+        except Exception as e:
+            print(f"Error sending periodic email: {e}")
+        time.sleep(86400)
 
-def trigger_email(user_email):
+def trigger_email(user_email,type_email,other_data):
     try:
         response = requests.post(
             EMAIL_SERVICE_URL,
-            json={"email": user_email}  # Send specific email
+            json={
+                "email": user_email,
+                "type": type_email,
+                "other_data": other_data  # Add any other data you want to send
+            }
         )
         if response.status_code == 200:
             print("Email service triggered successfully.")
@@ -174,7 +194,7 @@ def create_user_account():
         password= request.json.get('password')
     )
     
-    result = trigger_email(user.email)  # Trigger email service
+    result = trigger_email(user.email,1,None)  # Trigger email service
     print(f"Trigger mail succes: {result}")
     # Tests still necessary
     
@@ -239,7 +259,8 @@ def get_user_account(userId):
 
 # main driver function
 if __name__ == '__main__':
-
+    email_process = multiprocessing.Process(target=send_periodic_email)
+    email_process.start()
     # run() method of Flask class runs the application 
     # on the local development server.
     app.run(host='0.0.0.0', port=5000, debug=True)
