@@ -36,7 +36,7 @@
         "backend": [
           {
             "encoding": "json",
-            "url_pattern": "/login",
+            "url_pattern": "</login",
             "host": ["http://user_service:5000"]
           }
         ]

@@ -4,23 +4,51 @@ from flask import Flask, request
 from resources.customTypes import User, Session, CtScan, CtScanAnalysis, Error, Payment
 import sqlite3
 from datetime import datetime, timedelta
-import uuid
+import requests
 
 # Flask constructor takes the name of 
 # current module (__name__) as argument.
 app = Flask(__name__)
 DATABASE_URL = '/data/aidence.db'
-DEBIT_SERVICE = "https://us-central1-adaaaaa.cloudfunctions.net/get-money"  # This needs a valid project ID and region , please help
-# The route() function of the Flask class is a decorator, 
-# which tells the application which URL should call 
-# the associated function.
+DEBIT_SERVICE = "https://us-central1-adaaaaa.cloudfunctions.net/debit-money" 
+
 @app.route('/payment', methods=['POST'])
 def get_payment():
     userId = request.json.get('userId')
     amount = request.json.get('amount')
-    
-    if False: #Here use FAAS application to get money DEBIT_SERVICE
+
+    if not amount:
+        return {"error": "Missing 'amount' in request body"}, 400
+
+    # Get Iban from DB using userId
+    try:
+        conn = sqlite3.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT iban FROM User WHERE userId = ?
+            """,
+            (userId,)
+        )
+        row = cursor.fetchone()
+
+        if row is None:
+            return {"error": "User not found"}, 404
+
+        iban = row[0]
+
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return {"error": "Failed to get user iban"}, 500
+    finally:
+        conn.close()
+    # Here use FAAS application to get money DEBIT_SERVICE
+    get_money = requests.post(DEBIT_SERVICE, json={"iban": iban, "amount": amount})
+
+    if get_money.status_code != 200:
         return {"error": "Direct debit procedure failed, external error"}, 401
+    else: 
+        print(f"Direct debit FAAS procedure succeeded, external response: {get_money.json()}")
     # Look up the user in the database
     try:
         conn = sqlite3.connect(DATABASE_URL)

@@ -179,10 +179,14 @@ def trigger_email(user_email, type_email, other_data):
             print("Email service send successfully.")
         else:
             print(f"Failed to send email service: {response.status_code}")
-    except request.exceptions.RequestException as e:
+            return False
+    except requests.exceptions.RequestException as e:
         print(f"Error sending email service: {e}")
+        return False
     finally:
         print(f"Email service triggered successfully.")
+    
+    return True
 
 @app.route('/account', methods=['POST'])
 def create_user_account():
@@ -191,11 +195,15 @@ def create_user_account():
         username= request.json.get('username'),
         email= request.json.get('email'),
         type= request.json.get('type', 2),
-        password= request.json.get('password')
+        password= request.json.get('password'),
+        iban = request.json.get('iban')
     )
-    
-    result = trigger_email(user.email,1,None)  # Trigger email service
-    print(f"Trigger mail succes: {result}")
+
+    result = trigger_email(user.email, 1, None)  # Trigger email service
+    if not result:
+        print(f"Trigger mail failed: {result}")
+        return {"error": "Failed to send email"}, 500
+    print(f"Trigger mail success: {result}")
     # Tests still necessary
     
     try:
@@ -203,10 +211,10 @@ def create_user_account():
         cursor = conn.cursor()
         cursor.execute(
             """
-            INSERT INTO User (username, email, type, password)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO User (username, email, type, password, iban)
+            VALUES (?, ?, ?, ?, ?)
             """,
-            (user.username, user.email, user.type, user.password)
+            (user.username, user.email, user.type, user.password, user.iban)
         )
         conn.commit()
         user.userId = cursor.lastrowid
@@ -243,7 +251,8 @@ def get_user_account(userId):
             username=row[1],
             email=row[2],
             type=row[3],
-            password=row[4]
+            password=row[4],
+            iban=row[5]
         )
         
     except sqlite3.Error as e:

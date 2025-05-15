@@ -3,6 +3,8 @@ from email.mime.text import MIMEText
 import functions_framework
 from flask import Flask, request
 
+# gcloud functions deploy send-email --entry-point send_email_to_user --region us-central1 --allow-unauthenticated --runtime python313 --gen2 --trigger-http
+      
 FROM_EMAIL = 'aidencemails@gmail.com'
 FROM_PASSWORD = 'xhspntpssdizvsnj'
 message1 = '''
