@@ -22,114 +22,190 @@
       "max_age": "12h",
       "allow_credentials": false,
       "debug": true
+    },
+    "router": {
+      "return_error_msg": true
     }
   },
+  "timeout": "10000ms",
   "output_encoding": "json",
   "name": "CTScan API",
-  "host": ["http://localho.st"],
+  "host": [
+    "http://localho.st"
+  ],
   "port": 8081,
-  "endpoints":
-    [
-      {
-        "endpoint": "/login",
-        "method": "POST",
-        "backend": [
-          {
-            "encoding": "json",
-            "url_pattern": "</login",
-            "host": ["http://user_service:5000"]
+  "endpoints": [
+    {
+      "endpoint": "/login",
+      "method": "POST",
+      "backend": [
+        {
+          "encoding": "json",
+          "url_pattern": "/login",
+          "host": [
+            "http://user_service:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
           }
-        ]
-      },
-      {
-        "endpoint": "/logout",
-        "method": "POST",
-        "backend": [
-          {
-            "url_pattern": "/logout",
-            "host": ["http://user_service:5000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/logout",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/logout",
+          "host": [
+            "http://user_service:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
           }
-        ]
-      },
-      {
-        "endpoint": "/account",
-        "method": "POST",
-        "backend": [
-          {
-            "url_pattern": "/account",
-            "host": ["http://user_service:5000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/account",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/account",
+          "host": [
+            "http://user_service:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
           }
-        ]
-      },
-      {
-        "endpoint": "/account/{userId}",
-        "method": "GET",
-        "backend": [
-          {
-            "url_pattern": "/account/{userId}",
-            "host": ["http://user_service:5000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/account/{userId}",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/account/{userId}",
+          "host": [
+            "http://user_service:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
           }
-        ]
-      },
-      {
-        "endpoint": "/upload",
-        "method": "POST",
-        "backend": [
-          {
-            "url_pattern": "/upload",
-            "host": ["http://analysis_service:5000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/upload",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/upload",
+          "host": [
+            "http://analysis_service:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
           }
-        ]
-      },
-      {
-        "endpoint": "/analyse",
-        "method": "POST",
-        "backend": [
-          {
-            "url_pattern": "/analyse",
-            "host": ["http://analysis_service:5000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/analyse",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/analyse",
+          "host": [
+            "http://analysis_service:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
           }
-        ]
-      },
-      {
-        "endpoint": "/report/{reportId}",
-        "method": "GET",
-        "backend": [
-          {
-            "url_pattern": "/report/{reportId}",
-            "host": ["http://analysis_service:5000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/report/{reportId}",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/report/{reportId}",
+          "host": [
+            "http://analysis_service:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
           }
-        ]
-      },
-      {
-        "endpoint": "/report",
-        "method": "POST",
-        "backend": [
-          {
-            "url_pattern": "/report",
-            "host": ["http://analysis_service:5000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/report",
+      "method": "POST",
+      "timeout": "10s",
+      "backend": [
+        {
+          "url_pattern": "/report",
+          "host": [
+            "http://analysis_service:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
           }
-        ]
-      },
-      {
-        "endpoint": "/payment/{userId}",
-        "method": "GET",
-        "backend": [
-          {
-            "url_pattern": "/payment/{userId}",
-            "host": ["http://payment_service:5000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/payment/{userId}",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/payment/{userId}",
+          "host": [
+            "http://payment_service:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
           }
-        ]
-      },
-      {
-        "endpoint": "/payment",
-        "method": "POST",
-        "backend": [
-          {
-            "url_pattern": "/payment",
-            "host": ["http://payment_service:5000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/payment",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/payment",
+          "host": [
+            "http://payment_service:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
           }
-        ]
-      }
-    ]
+        }
+      ]
+    }
+  ]
 }

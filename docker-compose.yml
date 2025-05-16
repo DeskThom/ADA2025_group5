@@ -46,5 +46,6 @@ services:
     depends_on:
       - user_service
       - analysis_service
+      - payment_service
     ports:
       - 8080:8081
