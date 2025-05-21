@@ -224,7 +224,13 @@ def create_report():
         </body>
     </html>
     """
-    result = trigger_email(report_owner_email,1,content)  # Trigger email service
+    msg = f"""
+        CT Scan Analysis Report
+        ------------------------
+        Analysis Score: {score:.2f}
+        Report generated at: {created_at}
+        """
+    result = trigger_email(report_owner_email,3,msg)  # Trigger email service
     print(f"Trigger mail succes: {result}")
 
     # Insert report
