@@ -191,8 +191,10 @@ def create_report():
     analysis_id = data.get('ctScanAnalysisId')
     owner = data.get('owner', 1)
      # Get the owner's email from the User table
+    conn = sqlite3.connect(DATABASE_URL)
+    cursor = conn.cursor()
     cursor.execute(
-        "SELECT email FROM User WHERE id = ?",
+        "SELECT email FROM User WHERE userId = ?",
         (owner,)
     )
     user_row = cursor.fetchone()
@@ -202,8 +204,6 @@ def create_report():
         report_owner_email = None  # or handle not found
     created_at = datetime.now().isoformat()
 
-    conn = sqlite3.connect(DATABASE_URL)
-    cursor = conn.cursor()
 
     # Verify analysis and get its score
     cursor.execute("SELECT score FROM CtScanAnalysis WHERE id = ?", (analysis_id,))

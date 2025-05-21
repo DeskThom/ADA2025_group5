@@ -44,7 +44,8 @@ def login_user():
             username=row[1],
             email=row[2],
             type=row[3],
-            password=row[4]
+            password=row[4],
+            iban=row[5]
         )
         
     except sqlite3.Error as e:
