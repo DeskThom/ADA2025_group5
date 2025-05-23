@@ -3,3 +3,6 @@ __pycache__/
 /data
 .DS_store
 aidence.db
+data/.DS_Store
+.DS_Store
+data/aidence.db

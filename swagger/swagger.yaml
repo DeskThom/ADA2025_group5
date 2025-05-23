@@ -319,6 +319,19 @@ paths:
       responses:
         '200':
           description: successful operation
+          content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Response message
+                  example: Successfully debited 100.5 from account NL89370400440532013000
+                status:
+                  type: string
+                  description: Status of the operation
+                  example: success
         '400':
           description: Invalid payment details supplied
         default:

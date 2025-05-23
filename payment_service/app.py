@@ -13,7 +13,7 @@ DATABASE_URL = '/data/aidence.db'
 DEBIT_SERVICE = "https://us-central1-adaaaaa.cloudfunctions.net/debit-money" 
 
 @app.route('/payment', methods=['POST'])
-def get_payment():
+def debit_payment():
     userId = request.json.get('userId')
     amount = request.json.get('amount')
 
@@ -49,6 +49,7 @@ def get_payment():
         return {"error": "Direct debit procedure failed, external error"}, 401
     else: 
         print(f"Direct debit FAAS procedure succeeded, external response: {get_money.json()}")
+        faas_message = get_money.json()
     # Look up the user in the database
     try:
         conn = sqlite3.connect(DATABASE_URL)
@@ -67,10 +68,10 @@ def get_payment():
     finally:
         conn.close()
     
-    return {}, 200
+    return faas_message, 200
 
 @app.route('/payment/<int:userId>', methods=['GET'])
-def get_user_account(userId):
+def get_payment_info(userId):
     try:
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
